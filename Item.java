@@ -1,0 +1,96 @@
+package com.lesson5;
+
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
+
+import javax.persistence.*;
+import java.io.Serializable;
+
+import java.util.Date;
+
+@JsonPropertyOrder(value = {
+        "id",
+        "name",
+        "dateCreated",
+        "lastUpdateDate",
+        "description"
+})
+
+@Entity(name = "Item")
+@Table(name = "Item")
+public class Item implements Serializable {
+
+    @JsonIgnore
+    private long id;
+    private String name;
+    private Date dateCreated;
+    private Date lastUpdatedDate;
+    private String description;
+
+
+    public Item() {
+    }
+
+    @Id
+    @SequenceGenerator(name = "PR_SEQ", sequenceName = "PRODUCT_SEQ", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "PR_SEQ")
+    @Column(name = "ID")
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    @Column(name = "NAME")
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+
+@Temporal(TemporalType.DATE)
+@Column(name = "DATECREATED")
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "LASTUPDATED")
+    public Date getLastUpdatedDate() {
+        return lastUpdatedDate;
+    }
+
+    public void setLastUpdatedDate(Date lastUpdatedDate) {
+        this.lastUpdatedDate = lastUpdatedDate;
+    }
+
+    @Column(name = "DESCRIPTION")
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Item{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", dateCreated=" + dateCreated +
+                ", lastUpdatedDate=" + lastUpdatedDate +
+                ", description='" + description + '\'' +
+                '}';
+    }
+}
