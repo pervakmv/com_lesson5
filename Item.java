@@ -12,7 +12,7 @@ import java.util.Date;
         "id",
         "name",
         "dateCreated",
-        "lastUpdateDate",
+        "lastUpdatedDate",
         "description"
 })
 

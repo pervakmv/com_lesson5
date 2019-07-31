@@ -13,11 +13,7 @@ public class Repository {
 
 
     public Item save(Item item) {
-        if (entityManager != null)
             entityManager.persist(item);
-        else
-            System.out.println("entity manager is null");
-        //System.out.println(item);
         return item;
     }
 
