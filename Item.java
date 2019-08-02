@@ -1,5 +1,7 @@
 package com.lesson5;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
@@ -52,9 +54,10 @@ public class Item implements Serializable {
         this.name = name;
     }
 
-
-@Temporal(TemporalType.DATE)
-@Column(name = "DATECREATED")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ")
+    @JsonProperty("dateCreated")
+    @Temporal(TemporalType.DATE)
+    @Column(name = "DATECREATED")
     public Date getDateCreated() {
         return dateCreated;
     }
@@ -63,6 +66,9 @@ public class Item implements Serializable {
         this.dateCreated = dateCreated;
     }
 
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd@HH:mm:ss.SSSZ")
+    @JsonProperty("lastUpdatedDate")
     @Temporal(TemporalType.DATE)
     @Column(name = "LASTUPDATED")
     public Date getLastUpdatedDate() {

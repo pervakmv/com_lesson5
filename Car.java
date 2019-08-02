@@ -2,19 +2,21 @@ package com.lesson5;
 
 import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
+import java.io.Serializable;
+
 @JsonPropertyOrder(value = {
         "model",
         "color",
         "weight"
 })
-public class Car {
+public class Car implements Serializable {
     //Сделан для проверки некоторых моментов
     String model;
     String color;
     int weight;
 
-//    public Car() {
-//    }
+    public Car() {
+    }
 
     public Car(String model, String color, int weight) {
         this.model = model;
