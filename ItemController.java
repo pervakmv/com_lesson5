@@ -3,12 +3,8 @@ package com.lesson5;
 import com.lesson5.Exception.InternalServerErrorException;
 
 
-import org.codehaus.jackson.JsonGenerator;
-import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.JsonSerializer;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializerProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,70 +14,73 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.Produces;
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.List;
 
 @Controller
 @Transactional
 @RequestMapping(value = "/item", headers = "Accept=*/*", produces = "application/json")
 public class ItemController {
 
-    private Repository dao;
+    private ItemDAO dao;
 
     @Autowired
-    public ItemController(Repository repository) {
+    public ItemController(ItemDAO repository) {
         this.dao = repository;
     }
 
-    //    private ItemDAO dao;
-//
-//    @Autowired
-//    public TestController(ItemDAO dao) {
-//        this.dao = dao;
-//    }
-//
-//    public ItemDAO getDao() {
-//        return dao;
-//    }
-//
-//    public void setDao(ItemDAO dao) {
-//        this.dao = dao;
-//    }
-
-
-    //
-    //@RequestMapping(method = RequestMethod.GET, value = "/item/save", produces = "text/plain")
-
-
 
     @PostMapping(value = "/save", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-                    produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     public @ResponseBody
     ResponseEntity<String> save(@RequestBody Item item) {
-        System.out.println("Body item " + item);
-        System.out.println( item.toString());
-
         dao.save(item);
-
-
-        return new ResponseEntity("/Item/Save", HttpStatus.OK);
+        return new ResponseEntity("Ok", HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET, value = "/listItem", produces = "text/plain")
+
+//    @PostMapping(value = "/delete", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+//            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+
+    //http://localhost:8080/item/delete/241
+    @GetMapping(value = "/delete/{id}", produces = {MediaType.TEXT_PLAIN_VALUE})
     public @ResponseBody
-    void listItem() throws InternalServerErrorException{
-        if(dao != null)
-        System.out.println("Items : " + dao.listItem());
-        else
-            System.out.println("dao is null");
+    ResponseEntity<String> delete(@PathVariable("id") String id) {
+        System.out.println(dao.delete(Long.parseLong(id)));
+        return new ResponseEntity("Ok", HttpStatus.OK);
+    }
+
+    //http://localhost:8080/item/id?id=241
+    @GetMapping(value = "/id", produces = {MediaType.TEXT_PLAIN_VALUE})
+    // @RequestMapping(method = RequestMethod.GET, value = "/id", produces = "text/plain")
+    public @ResponseBody
+    ResponseEntity<String> readId(@RequestParam String id, Model model) {
+        System.out.println("ID = " + id);
+
+        return new ResponseEntity("Ok", HttpStatus.OK);
+    }
+
+
+    @PostMapping(value = "/update", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    public @ResponseBody
+    ResponseEntity<String> update(@RequestBody Item item) {
+        System.out.println("Item " + item.toString());
+        dao.update(item);
+        return new ResponseEntity("Ok", HttpStatus.OK);
+    }
+
+
+    @Transactional
+    @RequestMapping(method = RequestMethod.GET, value = "/list", produces = "text/plain")
+    public @ResponseBody
+    String listItem() {
+        List<String> result;
+        result = dao.listItem();
+        return result.toString();
     }
 
 
@@ -100,7 +99,6 @@ public class ItemController {
         System.out.println("Car = " + car);
         return new ResponseEntity("/register", HttpStatus.OK);
     }
-
 
 
     @PostMapping(value = "/test3", produces = {MediaType.TEXT_PLAIN_VALUE})
