@@ -4,6 +4,7 @@ import com.lesson5.Exception.InternalServerErrorException;
 import org.hibernate.query.NativeQuery;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -19,20 +20,33 @@ public class ItemDAO {
     private EntityManager entityManager;
 
 
-    public Item save(Item item) {
-        entityManager.persist(item);
+    public Item save(Item item) throws InternalServerErrorException {
+        try {
+            entityManager.persist(item);
+        } catch (EntityExistsException e) {
+            throw new InternalServerErrorException("Save is failed" + "\n" + e.getMessage() + "Cause:" + e.getCause());
+        }
         return item;
     }
 
 
-    public Item delete(Long id) {
+    public Item delete(Long id) throws InternalServerErrorException {
         Item item = entityManager.find(Item.class, id);
-        entityManager.remove(item);
+        try {
+            entityManager.remove(item);
+        } catch (EntityExistsException e) {
+            throw new InternalServerErrorException("Delete item is failed" + "\n" + e.getMessage());
+        }
+
         return item;
     }
 
-    public Item update(Item item) {
-        item = entityManager.merge(item);
+    public Item update(Item item) throws InternalServerErrorException {
+        try {
+            item = entityManager.merge(item);
+        } catch (EntityExistsException e) {
+            throw new InternalServerErrorException("Update is failed" + "\n" + e.getMessage());
+        }
         return item;
     }
 

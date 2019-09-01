@@ -33,11 +33,16 @@ public class ItemController {
     }
 
 
-    @PostMapping(value = "/save", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/save", consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     public @ResponseBody
     ResponseEntity<String> save(@RequestBody Item item) {
-        dao.save(item);
+
+        try {
+            dao.save(item);
+        } catch (InternalServerErrorException e) {
+            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity("Ok", HttpStatus.OK);
     }
 
@@ -49,7 +54,11 @@ public class ItemController {
     @GetMapping(value = "/delete/{id}", produces = {MediaType.TEXT_PLAIN_VALUE})
     public @ResponseBody
     ResponseEntity<String> delete(@PathVariable("id") String id) {
-        System.out.println(dao.delete(Long.parseLong(id)));
+        try {
+            dao.delete(Long.parseLong(id));
+        } catch (InternalServerErrorException e) {
+            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity("Ok", HttpStatus.OK);
     }
 
@@ -64,12 +73,17 @@ public class ItemController {
     }
 
 
-    @PostMapping(value = "/update", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/update", consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     public @ResponseBody
     ResponseEntity<String> update(@RequestBody Item item) {
-        System.out.println("Item " + item.toString());
-        dao.update(item);
+
+        try {
+            dao.update(item);
+        } catch (InternalServerErrorException e) {
+            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity("Ok", HttpStatus.OK);
     }
 
@@ -92,8 +106,8 @@ public class ItemController {
     }
 
 
-    @PostMapping(value = "/test2", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
+    @PostMapping(value = "/test2", consumes = {MediaType.APPLICATION_JSON_VALUE},
+            produces = {MediaType.APPLICATION_JSON_VALUE})
     public @ResponseBody
     ResponseEntity<String> handleJsonPosRequest(@RequestBody Car car) {
         System.out.println("Car = " + car);
