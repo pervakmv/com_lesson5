@@ -3,6 +3,8 @@ package com.lesson5;
 import com.lesson5.Exception.InternalServerErrorException;
 
 
+import com.lesson5.Exception.InvalidIditem;
+import com.lesson5.Exception.ThereIsNoSuchItemException;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,30 +43,36 @@ public class ItemController {
         try {
             dao.save(item);
         } catch (InternalServerErrorException e) {
-            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity("Ok", HttpStatus.OK);
     }
 
 
-//    @PostMapping(value = "/delete", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE},
-//            produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
 
-    //http://localhost:8080/item/delete/241
     @GetMapping(value = "/delete/{id}", produces = {MediaType.TEXT_PLAIN_VALUE})
     public @ResponseBody
     ResponseEntity<String> delete(@PathVariable("id") String id) {
+        long itemId = 0;
         try {
-            dao.delete(Long.parseLong(id));
-        } catch (InternalServerErrorException e) {
-            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+            itemId = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
         }
+        try {
+            dao.delete(itemId);
+        } catch (InternalServerErrorException e) {
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (ThereIsNoSuchItemException e) {
+            return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+        }
+
         return new ResponseEntity("Ok", HttpStatus.OK);
     }
 
-    //http://localhost:8080/item/id?id=241
+
     @GetMapping(value = "/id", produces = {MediaType.TEXT_PLAIN_VALUE})
-    // @RequestMapping(method = RequestMethod.GET, value = "/id", produces = "text/plain")
+
     public @ResponseBody
     ResponseEntity<String> readId(@RequestParam String id, Model model) {
         System.out.println("ID = " + id);
@@ -81,7 +89,7 @@ public class ItemController {
         try {
             dao.update(item);
         } catch (InternalServerErrorException e) {
-            return new ResponseEntity<String>(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
         return new ResponseEntity("Ok", HttpStatus.OK);

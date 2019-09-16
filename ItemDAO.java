@@ -1,15 +1,13 @@
 package com.lesson5;
 
 import com.lesson5.Exception.InternalServerErrorException;
-import org.hibernate.query.NativeQuery;
+import com.lesson5.Exception.ThereIsNoSuchItemException;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.TypedQuery;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -30,8 +28,12 @@ public class ItemDAO {
     }
 
 
-    public Item delete(Long id) throws InternalServerErrorException {
+    public Item delete(Long id) throws InternalServerErrorException, ThereIsNoSuchItemException {
+
         Item item = entityManager.find(Item.class, id);
+        if(item==null){
+            throw new ThereIsNoSuchItemException("Tehre is no such item");
+        }
         try {
             entityManager.remove(item);
         } catch (EntityExistsException e) {
